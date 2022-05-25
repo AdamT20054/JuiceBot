@@ -1,6 +1,6 @@
 module.exports = {
     name: "shard",
-    userPerms: [`ADMINISTRATOR`],
+    userPerms: [`SEND_MESSAGES`],
     clientPerms: [`MANAGE_MESSAGES`],
     ownerOnly: false,
     aliases: [``],
