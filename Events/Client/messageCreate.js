@@ -1,5 +1,5 @@
 const client = require('../../index.js');
-const { PREFIX } = require('../../config.json');
+const { PREFIX } = require('../../Data/config.json');
 
 const { MessageMentions } = require('discord.js');
 
