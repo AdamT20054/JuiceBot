@@ -16,7 +16,7 @@ module.exports = {
 				const totalMembers = results[1].reduce((acc, memberCount) => acc + memberCount, 0);
                 const shardArray = results[2];
 				return interaction.followUp({
-					content: `Total shards: \`[${shardArray}]\`\n\nServer count: \`${totalGuilds}\`\nMember count: \`${totalMembers}\``,
+					content: `Server count: \`${totalGuilds}\`\nMember count: \`${totalMembers}\``,
 					empheral: false
 				});
 			})

@@ -5,6 +5,6 @@ module.exports = {
     ownerOnly: false,
     aliases: [""],
     run: async(client, message, args) => {
-        message.channel.send("pong!")
+        message.reply("pong!")
     }
 }

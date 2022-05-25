@@ -36,5 +36,5 @@ client.on('messageCreate', async message => {
     
   }
 
-  if(command) command.run(client, message, args, prefix)
+  if(command) command.run(client, message, args)
 })
