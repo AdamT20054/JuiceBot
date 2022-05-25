@@ -1,5 +1,6 @@
+const fs = require('fs');
 const { Client, Collection } = require('discord.js');
-const { TOKEN, PREFIX } = require('./config.json');
+const { TOKEN, PREFIX } = require('./Data/config.json');
 const { default: axios } = require("axios");
 const client = new Client({
     intents: 30305
@@ -10,7 +11,7 @@ client.aliases = new Collection();
 client.categories = fs.readdirSync("./Commands");
 client.events = new Collection();
 client.slashCommands = new Collection();
-client.config = require(`./config.json`)
+client.config = require(`./Data/config.json`)
 
 module.exports = client;
 
@@ -20,7 +21,6 @@ module.exports = client;
 
 client.once('ready', (readyClient) => {
     console.log(`[READY] ${client.user.tag} is ready`);
-
 });
 
 process.on('unhandledRejection', err => {
