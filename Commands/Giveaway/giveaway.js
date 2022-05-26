@@ -1,24 +1,37 @@
 module.exports = {
-    name: "shard",
+    name: "giveaway",
     userPerms: [`SEND_MESSAGES`],
     clientPerms: [`MANAGE_MESSAGES`],
     ownerOnly: false,
-    aliases: [``],
-    description: "manage guild",
+    aliases: [`joingiveaway`],
+    description: "join giveaways.",
     async run(client, message, args) { // cleaner syntax
-        const promises = [
-			client.shard.fetchClientValues('guilds.cache.size'),
-			client.shard.broadcastEval(c => c.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)),
-            client.shard.fetchClientValues('guilds.cache.size'),
-		];
+        // Let user join a giveaway
+        function joinGiveaway() {
+            // query sqlite3 database for user's juice
+            let sql = `SELECT * FROM giveaways WHERE guildID = ${message.guild.id}`;
+            db.get(sql, (err, row) => {
+                if (err) {
+                    console.error(err.message);
+                }
+                if (row) {
+                    if (row.active == 1) {
+                        let sql = `UPDATE giveaways SET userIDs = ${message.author.id} WHERE guildID = ${message.guild.id}`;
+                        db.run(sql, (err) => {
+                            if (err) {
+                                console.error(err.message);
+                            }
+                        });
+                        message.channel.send(`You have joined the giveaway!`);
+                    } else {
+                        message.channel.send(`There is no active giveaway.`);
+                    }
+                } else {
+                    message.channel.send(`There is no active giveaway.`);
+                }
+            });
 
-		return Promise.all(promises)
-			.then(results => {
-				const totalGuilds = results[0].reduce((acc, guildCount) => acc + guildCount, 0);
-				const totalMembers = results[1].reduce((acc, memberCount) => acc + memberCount, 0);
-                const shardArray = results[2];
-				return message.reply(`Server count: \`${totalGuilds}\`\nMember count: \`${totalMembers}\``);
-			})
-			.catch(console.error);
+        }
+        
 	}
 }

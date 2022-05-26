@@ -1,12 +1,14 @@
 module.exports = {
-    name: "ping",
+    name: "shop",
     userPerms: [`SEND_MESSAGE`],
     clientPerms: [`SEND_MESSAGE`],
     ownerOnly: false,
     aliases: [""],
     run: async(client, message, args) => {
-        message.reply("pong!")
-        // test the latency
+       // Display all the items in a guilds shop database with it's price
+       function shop() {
+
+       }
 
     }
 }
