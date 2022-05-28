@@ -1,45 +1,60 @@
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./Data/JuiceEconomy.db');
 module.exports = {
-    name: "giveaway",
+    name: "getjuice",
     userPerms: [`SEND_MESSAGES`],
     clientPerms: [`MANAGE_MESSAGES`],
     ownerOnly: false,
-    aliases: [``],
+    aliases: [`redeem`],
     description: "Enter giveaways.",
     async run(client, message, args) { // cleaner syntax
-        // Check DB to see last redeem time
-        // compare to current time
-        // If difference large enough --> Update last redeemed time --> increase the users total by one.
-        // If difference not large enough ---> Do nothing//reply with time remaining.
-        // If no row in DB --> Create new row with current time and one juice.
-        function getJuice() {
-            let sql = `SELECT * FROM juice WHERE userID = ${message.author.id}`;
+        // Query sqlite database for users juice
+        // If user does not exist in database, create user and set juice to 0
+        function checkBalance() {
+            let sql = `SELECT * FROM Balance WHERE UserID = ${message.author.id}`;
             db.get(sql, (err, row) => {
                 if (err) {
                     console.error(err.message);
                 }
                 if (row) {
+                    // check the lastRedeemed value to see if user has redeemed in the last 8 hours
+                    let lastRedeemed = row.lastRedeemed;
                     let now = new Date();
-                    let lastRedeemed = new Date(row.lastRedeemed);
-                    let diff = now - lastRedeemed;
-                    if (diff > 3600000) {
-                        let sql = `UPDATE juice SET lastRedeemed = ${now}, juice = juice + 1 WHERE userID = ${message.author.id}`;
+                    let nowTime = now.getTime();
+                    let lastRedeemedTime = new Date(lastRedeemed).getTime();
+                    let timeDiff = nowTime - lastRedeemedTime;
+                    let timeDiffHours = timeDiff / 1000 / 60 / 60;
+                    if (timeDiffHours < 8) {
+                        message.channel.send(`Please wait ${8 - timeDiffHours} hours before redeeming again.`);
+                    } else {
+                        // add one juice to users balance
+                        let sql = `UPDATE Balance SET Juice = Juice + 1, lastRedeemed = '${now}' WHERE UserID = ${message.author.id}`;
                         db.run(sql, (err) => {
                             if (err) {
                                 console.error(err.message);
                             }
                         });
+                        message.channel.send(`You have been given 1 juice.`);
                     }
+                                      
+                    
+
+
+
+
                 } else {
-                    let now = new Date();
-                    let sql = `INSERT INTO juice (userID, lastRedeemed, juice) VALUES (${message.author.id}, ${now}, 1)`;
+                    let sql = `INSERT INTO Balance (UserID, juice) VALUES (${message.author.id}, 1)`;
                     db.run(sql, (err) => {
                         if (err) {
                             console.error(err.message);
                         }
                     });
+                    message.channel.send(`You have redeemed 1 juice.`);
                 }
             });
         }
+        
+    
         
         
 	}
